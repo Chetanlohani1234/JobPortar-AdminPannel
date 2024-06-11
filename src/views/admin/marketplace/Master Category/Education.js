@@ -45,7 +45,7 @@ const Education = () => {
              Name:"c2VsZWN0IElkLE5hbWUsU29ydE9yZGVyIGZyb20gTWFzdGVyRWR1Y2F0aW9u"
           };
           try{
-            const response = await axios.post('https://jobpartal-backend.onrender.comapi/Qualification');
+            const response = await axios.post('https://jobpartal-backend.onrender.com/api/Qualification');
             //const JobApplied = response.data.Response;
                
             // Calculate total applied applications
@@ -89,7 +89,7 @@ const Education = () => {
             Id: Id
           };
       
-          const response = await axios.post(`https://jobpartal-backend.onrender.comapi/Qualification/delete/${Id}`, {
+          const response = await axios.post(`https://jobpartal-backend.onrender.com/api/Qualification/delete/${Id}`, {
             headers: {
               'Content-Type': 'application/json',
               'TransactionKey': 'Es9JpGJyajaamahe5ZMoaumQG6lpEUylIhUR5ykAcA'

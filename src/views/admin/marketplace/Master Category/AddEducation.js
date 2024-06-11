@@ -242,7 +242,7 @@ const AddEducation = () => {
                 searchType: name
             };
     
-            const res = await fetch('https://jobpartal-backend.onrender.comapi/Add/Qualification', { // Corrected URL
+            const res = await fetch('https://jobpartal-backend.onrender.com/api/Add/Qualification', { // Corrected URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

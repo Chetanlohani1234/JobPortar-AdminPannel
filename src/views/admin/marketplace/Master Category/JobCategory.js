@@ -48,7 +48,7 @@ const JobCategory = () => {
              Name:"c2VsZWN0IElkLE5hbWUsU29ydE9yZGVyLEFjdGl2ZSBmcm9tIE1hc3RlckpvYkNhdGVnb3J5"
           };
           try{
-            const response = await axios.post('https://jobpartal-backend.onrender.comapi/Category/Jobs');
+            const response = await axios.post('https://jobpartal-backend.onrender.com/api/Category/Jobs');
             //const JobApplied = response.data.Response;
                
             // Calculate total applied applications
@@ -75,7 +75,7 @@ const JobCategory = () => {
             Id: Id
           };
       
-          const response = await axios.post(`https://jobpartal-backend.onrender.comapi/Category/delete/Jobs/${Id}`, {
+          const response = await axios.post(`https://jobpartal-backend.onrender.com/api/Category/delete/Jobs/${Id}`, {
             headers: {
               'Content-Type': 'application/json',
               'TransactionKey': 'Es9JpGJyajaamahe5ZMoaumQG6lpEUylIhUR5ykAcA'

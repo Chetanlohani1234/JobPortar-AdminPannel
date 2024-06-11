@@ -45,7 +45,7 @@ const JobType = () => {
              Name:"c2VsZWN0IElkLE5hbWUsU29ydE9yZGVyLEFjdGl2ZSBmcm9tIE1hc3RlckpvYlR5cGU="
           };
           try{
-            const response = await axios.post('https://jobpartal-backend.onrender.comapi/JobType');
+            const response = await axios.post('https://jobpartal-backend.onrender.com/api/JobType');
             //const JobApplied = response.data.Response;
                
             // Calculate total applied applications
@@ -89,7 +89,7 @@ const JobType = () => {
             Id: Id
           };
       
-          const response = await axios.post(`https://jobpartal-backend.onrender.comapi/JobType/delete/${Id}`, {
+          const response = await axios.post(`https://jobpartal-backend.onrender.com/api/JobType/delete/${Id}`, {
             headers: {
               'Content-Type': 'application/json',
               'TransactionKey': 'Es9JpGJyajaamahe5ZMoaumQG6lpEUylIhUR5ykAcA'
