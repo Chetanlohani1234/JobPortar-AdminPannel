@@ -5,7 +5,7 @@ import { Box, Flex, Text, Select, useColorModeValue } from "@chakra-ui/react";
 // Custom components
 import Card from "components/card/Card.js";
 import PieChart from "components/charts/PieChart";
-import { pieChartData, pieChartOptions } from "variables/charts";
+//import { pieChartData, pieChartOptions } from "variables/charts";
 import { VSeparator } from "components/separator/Separator";
 
 import { fetchBarChartDataDailyTraffic,fetchBarChartOptionsDailyTraffic } from "variables/api";
@@ -88,9 +88,9 @@ export default function Conversion(props) {
       setIsLoading(false);
       const data = await fetchBarChartDataDailyTraffic(period);
       setData(data);
-      const jobArray = data.map(item => item.jobs);
+      const jobArray = data.map(item => parseInt(item.counts));
       setBar(jobArray);
-      const jobArrayOption = data.map(item => item.language);
+      const jobArrayOption = data.map(item => item.OrganizationType);
       setBarOption(jobArrayOption);
       setIsLoading(true);
     } catch (error) {
@@ -98,6 +98,7 @@ export default function Conversion(props) {
     }
   };
 
+  //console.log("test dsds",barOption);
   console.log("Pie chart",pieChartData);
   console.log("pie chart s",pieChartOptions);
 
@@ -150,9 +151,6 @@ export default function Conversion(props) {
   return (
 
    <>
-
-   {/* <link rel="stylesheet" type="text/css" 
-   href="https://praraavantileathers.in/assets/AdminLTE-3.0.2/plugins/daterangepicker/daterangepicker.css"/> */}
     
     <Card p='20px' align='center' direction='column' w='100%' {...rest}>
       <Flex
@@ -241,11 +239,11 @@ export default function Conversion(props) {
                 color='secondaryGray.600'
                 fontWeight='700'
                 mb='5px'>
-                {item.language}
+                {item.OrganizationType}
               </Text>
             </Flex>
             <Text fontSize='lg' color={textColor} fontWeight='700'>
-              {`${item.jobs}%`}
+              {`${item.counts}`}
             </Text>
           </Flex>
           {index < data.length - 1 && (

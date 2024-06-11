@@ -1,14 +1,15 @@
 import React, {useState, useEffect} from "react";
+import Popup from "./Pages/popup";
 
 // Chakra imports
-import { Box, Flex, Text, Select,Table,Thead,Tbody,Td,Th,Tr, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Text, Select, useColorModeValue,Td,Tr,Th,Tbody,Table,Thead } from "@chakra-ui/react";
 // Custom components
 import Card from "components/card/Card.js";
 import PieChart from "components/charts/PieChart";
-import { pieChartData, pieChartOptions } from "variables/charts";
+//import { pieChartData, pieChartOptions } from "variables/charts";
 import { VSeparator } from "components/separator/Separator";
 
-import { fetchBarChartDataDailyTraffic,fetchBarChartOptionsDailyTraffic } from "variables/api";
+import { fetchBarChartCandidateGraphicsDetail,fetchBarChartCandidateGraphics,fetchBarChartOptionsDailyTraffic } from "variables/api";
 
 //import 'react-daterangepicker/daterangepicker.css';
 
@@ -21,8 +22,13 @@ import { addDays } from 'date-fns'
 import 'react-date-range/dist/styles.css'
 import 'react-date-range/dist/theme/default.css'
 
+const INITIAL_DISPLAY_COUNT = 3; 
+
 export default function Conversion(props) {
   const { ...rest } = props;
+  //const [showFullList, setShowFullList] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
@@ -36,7 +42,10 @@ export default function Conversion(props) {
 
   const[bar,setBar] = useState([]);
   const[barOption,setBarOption] = useState([]);
+  const[counts,setCounts] = useState([]);
+  const[type,setType] = useState([]);
   const[data,setData] = useState([]);
+  const[dataInfo,setDataInfo] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
 
 
@@ -86,11 +95,11 @@ export default function Conversion(props) {
   const fetchData = async (period) => {
     try {
       setIsLoading(false);
-      const data = await fetchBarChartDataDailyTraffic(period);
+      const data = await fetchBarChartCandidateGraphics(period);
       setData(data);
-      const jobArray = data.map(item => item.jobs);
+      const jobArray = data.map(item => parseInt(item.counts));
       setBar(jobArray);
-      const jobArrayOption = data.map(item => item.language);
+      const jobArrayOption = data.map(item => item.CurrentLocation);
       setBarOption(jobArrayOption);
       setIsLoading(true);
     } catch (error) {
@@ -98,6 +107,28 @@ export default function Conversion(props) {
     }
   };
 
+  const fetchInfo = async () => {
+    try {
+      setIsLoading(false);
+      const data = await fetchBarChartCandidateGraphicsDetail();
+      setDataInfo(data);
+      const jobArray = data.map(item => parseInt(item.Counts));
+      setCounts(jobArray);
+      const jobArrayOption = data.map(item => item.Type);
+      setType(jobArrayOption);
+      setIsLoading(true);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  console.log("dfdfdfd",dataInfo)
+
+  useEffect(() => {
+    fetchInfo();
+  }, []);
+
+  //console.log("test dsds",barOption);
   console.log("Pie chart",pieChartData);
   console.log("pie chart s",pieChartOptions);
 
@@ -146,13 +177,14 @@ export default function Conversion(props) {
         setOpen(false)
       }
     }
+    const handleViewMore = (item) => {
+      setShowPopup(true);
+    };
+
 
   return (
 
    <>
-
-   {/* <link rel="stylesheet" type="text/css" 
-   href="https://praraavantileathers.in/assets/AdminLTE-3.0.2/plugins/daterangepicker/daterangepicker.css"/> */}
     
     <Card p='20px' align='center' direction='column' w='100%' {...rest}>
       <Flex
@@ -162,7 +194,7 @@ export default function Conversion(props) {
         w='100%'
         mb='8px'>
         <Text color={textColor} fontSize='md' fontWeight='600' mt='4px'>
-        Candidate Demographics
+        Candidate Graphics
         </Text>
         {/* <input id="e1" name="e1"/> */}
           {/* <Select
@@ -216,7 +248,7 @@ export default function Conversion(props) {
       }
 
 
-    <Card
+    {/* <Card
       bg={cardColor}
       flexDirection='row'
       boxShadow={cardShadow}
@@ -225,7 +257,7 @@ export default function Conversion(props) {
       px='20px'
       mt='15px'
       mx='auto'>
-      {/* {data.map((item, index) => (
+      {data.map((item, index) => (
         <React.Fragment key={index}>
           <Flex direction='column' py='5px' me='10px'>
             <Flex align='center'>
@@ -241,84 +273,45 @@ export default function Conversion(props) {
                 color='secondaryGray.600'
                 fontWeight='700'
                 mb='5px'>
-                {item.language}
+                {item.OrganizationType}
               </Text>
             </Flex>
             <Text fontSize='lg' color={textColor} fontWeight='700'>
-              {`${item.jobs}%`}
+              {`${item.counts}`}
             </Text>
           </Flex>
           {index < data.length - 1 && (
             <VSeparator mx={{ base: "1px", xl: "1px", "1xl": "2px" }} />
           )}
         </React.Fragment>
-      ))} */}
-    </Card>
+      ))}
+    </Card> */}
 
-            {/* Table to display data */}
-            <Box w="100%" mt="20px" display="flex">
+                {/* Table to display data */}
+                <Box w="100%" mt="20px" display="flex">
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th>Language</Th>
-                <Th isNumeric>Jobs (%)</Th>
+                <Th>Type</Th>
+                <Th isNumeric>Number</Th>
               </Tr>
             </Thead>
             <Tbody>
-            <Tr>
-                <Td>20-30 Age Group</Td>
-                <Td isNumeric>30%</Td>
-              </Tr>
-              <Tr>
-                <Td>30-50 Age Group</Td>
-                <Td isNumeric>{}</Td>
-              </Tr>
-              <Tr>
-                <Td>50-60 Age Group</Td>
-                <Td isNumeric>20%</Td>
-              </Tr>
-              <Tr>
-                <Td>Male</Td>
-                <Td isNumeric>15%</Td>
-              </Tr>
-              <Tr>
-                <Td>Female</Td>
-                <Td isNumeric>10%</Td>
-              </Tr>
-              <Tr>
-                <Td>Delhi</Td>
-                <Td isNumeric>10%</Td>
-              </Tr>
-              <Tr>
-                <Td>Haryana</Td>
-                <Td isNumeric>10%</Td>
-              </Tr>
-              <Tr>
-                <Td>Dehradun</Td>
-                <Td isNumeric>10%</Td>
-              </Tr>
-              <Tr>
-                <Td>IT background</Td>
-                <Td isNumeric>10%</Td>
-              </Tr>
-              <Tr>
-                <Td>Medical background</Td>
-                <Td isNumeric>10%</Td>
-              </Tr>
-              <Tr>
-                <Td>12th pass</Td>
-                <Td isNumeric>10%</Td>
-              </Tr>
-              {/* {data.map((item, index) => (
-                <Tr key={index}>
-                  <Td>{item.language}</Td>
-                  <Td isNumeric>{item.jobs}</Td>
-                </Tr>
-              ))} */}
-            </Tbody>
+        {dataInfo.slice(0, 2).map((item, index) => (
+          <Tr key={index}>
+            <Td>{item.Type}</Td>
+            <Td isNumeric>{item.Counts}</Td>
+          </Tr>
+        ))}
+        <Tr>
+          <Td colSpan="2">
+            <button onClick={handleViewMore}>View More</button>
+          </Td>
+        </Tr>
+      </Tbody>
+      {showPopup && <Popup onClose={() => setShowPopup(false)} data={dataInfo} />}
           </Table>
         </Box>
-              
 
     </Card>  
    
@@ -326,6 +319,4 @@ export default function Conversion(props) {
 
   );
 }
-
-
 

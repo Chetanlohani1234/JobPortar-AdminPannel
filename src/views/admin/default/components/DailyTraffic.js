@@ -36,11 +36,12 @@ export default function DailyTraffic(props) {
 
    const[bar,setBar] = useState([]);
    const[barOption,setBarOption] = useState([]);
+   const[data,setData] = useState([]);
    const [selectedPeriod, setSelectedPeriod] = useState('monthly');
 
    const barChartDataDailyTraffic = [
     {
-      name: "Daily Traffic",
+      name: "No. of Company",
       data: bar,
     },
   ];
@@ -141,22 +142,37 @@ export default function DailyTraffic(props) {
     },
   };
 
+    // const fetchData = async (period) => {
+    //   try {
+    //     setIsLoading(false);
+    //     const data = await fetchBarChartDataDailyTraffic(period);
+    //     //const options = await fetchBarChartOptionsDailyTraffic();
+    //    // console.log("opydfvdsfgd: ",options);
+    //    // setBarChartDataDailyTraffic(data);
+    //    const jobArray = data.map(item=>item.jobs)
+    //    setBar(jobArray);
+
+    //    const jobArrayOption = data.map(item=>item.language)
+    //    setBarOption(jobArrayOption);
+       
+    //     setIsLoading(true);
+    //    // setBarChartOptionsDailyTraffic(data);
+
+    //   } catch (error) {
+    //     console.error('Error fetching data:', error);
+    //   }
+    // };
+
     const fetchData = async (period) => {
       try {
         setIsLoading(false);
         const data = await fetchBarChartDataDailyTraffic(period);
-        //const options = await fetchBarChartOptionsDailyTraffic();
-       // console.log("opydfvdsfgd: ",options);
-       // setBarChartDataDailyTraffic(data);
-       const jobArray = data.map(item=>item.jobs)
-       setBar(jobArray);
-
-       const jobArrayOption = data.map(item=>item.language)
-       setBarOption(jobArrayOption);
-       
+        setData(data);
+        const jobArray = data.map(item => parseInt(item.counts));
+        setBar(jobArray);
+        const jobArrayOption = data.map(item => item.OrganizationType);
+        setBarOption(jobArrayOption);
         setIsLoading(true);
-       // setBarChartOptionsDailyTraffic(data);
-
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -165,6 +181,12 @@ export default function DailyTraffic(props) {
     useEffect(() => {
       fetchData(selectedPeriod);
     }, [selectedPeriod]);
+
+    console.log("test ",barChartOptionsDailyTraffic);
+    console.log("test ",barChartDataDailyTraffic);
+
+
+
   
     const handlePeriodChange = (event) => {
       setSelectedPeriod(event.target.value);

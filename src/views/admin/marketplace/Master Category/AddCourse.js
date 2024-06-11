@@ -51,7 +51,7 @@ const AddCourse = () => {
              Name:"c2VsZWN0IElkLE5hbWUsQ29kZSxTb3J0T3JkZXIsRktFZHVjYXRpb24gZnJvbSBNYXN0ZXJDb3Vyc2U="
           };
           try{
-            const response = await axios.post('https://jobpartal-backend.onrender.com/api/Course');
+            const response = await axios.post('https://jobpartal-backend.onrender.comapi/Course');
             //const JobApplied = response.data.Response;
                
             // Calculate total applied applications

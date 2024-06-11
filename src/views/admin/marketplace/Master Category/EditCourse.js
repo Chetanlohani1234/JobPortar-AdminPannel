@@ -54,7 +54,7 @@ const EditCourse = () => {
              Name:"c2VsZWN0IElkLE5hbWUsQ29kZSxTb3J0T3JkZXIsRktFZHVjYXRpb24gZnJvbSBNYXN0ZXJDb3Vyc2U="
           };
           try{
-            const response = await axios.post('https://jobpartal-backend.onrender.com/api/Course');
+            const response = await axios.post('https://jobpartal-backend.onrender.comapi/Course');
             //const JobApplied = response.data.Response;
                
             // Calculate total applied applications
@@ -79,7 +79,7 @@ const EditCourse = () => {
               Id: Id // Adding job category ID to the request body
             };
     
-            const response = await axios.post(`https://jobpartal-backend.onrender.com/api/Course/${Id}`, requestBody, {
+            const response = await axios.post(`https://jobpartal-backend.onrender.comapi/Course/${Id}`, requestBody, {
               headers: {
                 'Content-Type': 'application/json',
                 'TransactionKey': 'c2VsZWN0IElkLE5hbWUsU29ydE9yZGVyLEFjdGl2ZSBmcm9tIE1hc3RlckpvYkNhdGVnb3J5IHdoZXJlIGlkPQ=='

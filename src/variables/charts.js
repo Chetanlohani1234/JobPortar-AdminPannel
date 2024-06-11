@@ -265,6 +265,8 @@ export const lineChartDataTotalSpent = [
     data: [30, 40, 24, 46, 20, 46, 60, 40,80, 70, 60, 50],
   },
 ];
+
+
  
 export const lineChartOptionsTotalSpent = {
   chart: {

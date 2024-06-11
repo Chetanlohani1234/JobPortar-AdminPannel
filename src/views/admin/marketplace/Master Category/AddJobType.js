@@ -242,7 +242,7 @@ const AddJobType = () => {
                 searchType: name
             };
     
-            const res = await fetch('https://jobpartal-backend.onrender.com/api/Add/JobType', { // Corrected URL
+            const res = await fetch('https://jobpartal-backend.onrender.comapi/Add/JobType', { // Corrected URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

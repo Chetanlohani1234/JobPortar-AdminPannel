@@ -13,7 +13,7 @@ const JobDetails = () => {
     useEffect(() => {
         const fetchJob = async () => {
             try {
-                const response = await fetch(`https://jobpartal-backend.onrender.com/api/job/${jobId}`);
+                const response = await fetch(`https://jobpartal-backend.onrender.comapi/job/${jobId}`);
                 const result = await response.json();
                 if (result.Status === "success" && result.Response.length > 0 ) {
                     setJob(result.Response[0]);

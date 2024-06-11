@@ -26,7 +26,7 @@ const Education = () => {
     // useEffect(() => {
     //     const fetchJobs = async () => {
     //       try {
-    //         const response = await axios.get('https://jobpartal-backend.onrender.com//api/Category/Jobs');
+    //         const response = await axios.get('https://jobpartal-backend.onrender.com/api/Category/Jobs');
     //         setfilteredData(response.data.Response);
     //       } catch (err) {
     //         //setError(err);
@@ -45,7 +45,7 @@ const Education = () => {
              Name:"c2VsZWN0IElkLE5hbWUsU29ydE9yZGVyIGZyb20gTWFzdGVyRWR1Y2F0aW9u"
           };
           try{
-            const response = await axios.post('https://jobpartal-backend.onrender.com/api/Qualification');
+            const response = await axios.post('https://jobpartal-backend.onrender.comapi/Qualification');
             //const JobApplied = response.data.Response;
                
             // Calculate total applied applications
@@ -89,7 +89,7 @@ const Education = () => {
             Id: Id
           };
       
-          const response = await axios.post(`https://jobpartal-backend.onrender.com/api/Qualification/delete/${Id}`, {
+          const response = await axios.post(`https://jobpartal-backend.onrender.comapi/Qualification/delete/${Id}`, {
             headers: {
               'Content-Type': 'application/json',
               'TransactionKey': 'Es9JpGJyajaamahe5ZMoaumQG6lpEUylIhUR5ykAcA'
@@ -98,8 +98,8 @@ const Education = () => {
           });
       
           console.log('Response:', response.data);
-          toast.success('Job category deleted successfully!');
-          //window.location.reload();
+          toast.success('Qualification deleted successfully!');
+          window.location.reload();
           //setfilteredData(filteredData.filter(job => job.Id !== jobId));
         } catch (error) {
           console.error('Error:', error);

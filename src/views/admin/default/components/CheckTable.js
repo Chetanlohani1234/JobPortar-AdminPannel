@@ -208,7 +208,7 @@ export default function CheckTable() {
       };
 
       try {
-        const response = await axios.post('https://jobpartal-backend.onrender.com/api/Category/Job', data);
+        const response = await axios.post('https://jobpartal-backend.onrender.comapi/Category/Job', data);
         
         const responseData = response.data.Response.map(item => ({
           category: item.Category,

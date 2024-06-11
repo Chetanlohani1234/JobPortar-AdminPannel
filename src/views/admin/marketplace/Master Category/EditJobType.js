@@ -54,7 +54,7 @@ const EditJobType = () => {
               Id: Id // Adding job category ID to the request body
             };
     
-            const response = await axios.post(`https://jobpartal-backend.onrender.com/api/JobType/${Id}`, requestBody, {
+            const response = await axios.post(`https://jobpartal-backend.onrender.comapi/JobType/${Id}`, requestBody, {
               headers: {
                 'Content-Type': 'application/json',
                 'TransactionKey': 'c2VsZWN0IElkLE5hbWUsU29ydE9yZGVyLEFjdGl2ZSBmcm9tIE1hc3RlckpvYlR5cGUgd2hlcmUgaWQ9'
@@ -175,7 +175,7 @@ const EditJobType = () => {
                 searchType: name
             };
     
-            const res = await fetch(`https://jobpartal-backend.onrender.com/api/Update/JobType/${Id}`, { // Corrected URL
+            const res = await fetch(`https://jobpartal-backend.onrender.comapi/Update/JobType/${Id}`, { // Corrected URL
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
