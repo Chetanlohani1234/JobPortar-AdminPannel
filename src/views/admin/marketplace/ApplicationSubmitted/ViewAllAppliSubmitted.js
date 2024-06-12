@@ -21,7 +21,7 @@ const ViewAllAppliSubmitted = () => {
           };
     
           try {
-            const response = await axios.post(`https://jobpartal-backend.onrender.comapi/Application/Submitted/View/${jobId}`, data);
+            const response = await axios.post(`https://jobpartal-backend.onrender.com/api/Application/Submitted/View/${jobId}`, data);
             
             const education = response.data.Response;
             setJobs(education);

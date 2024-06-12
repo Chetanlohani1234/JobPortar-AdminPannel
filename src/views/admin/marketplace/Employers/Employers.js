@@ -25,7 +25,7 @@ const Employer = () => {
     useEffect(() => {
         const fetchJobs = async () => {
           try {
-            const response = await axios.get('https://jobpartal-backend.onrender.comapi/Employers');
+            const response = await axios.get('https://jobpartal-backend.onrender.com/api/Employers');
             setfilteredData(response.data.Response);
           } catch (err) {
             //setError(err);

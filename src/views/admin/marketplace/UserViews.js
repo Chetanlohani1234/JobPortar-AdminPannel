@@ -19,7 +19,7 @@ const  UserViews = () => {
     useEffect(() => {
         const fetchJob = async () => {
             try {
-                const response = await fetch(`https://jobpartal-backend.onrender.comapi/UserId/${UserId}`);
+                const response = await fetch(`https://jobpartal-backend.onrender.com/api/UserId/${UserId}`);
                 const result = await response.json();
                 if (result.Status === "success" && result.Response.length > 0 ) {
                     setJob(result.Response[0]);

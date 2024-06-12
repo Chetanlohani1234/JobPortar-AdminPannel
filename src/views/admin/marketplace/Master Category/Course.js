@@ -89,7 +89,7 @@ const Course = () => {
             Id: Id
           };
       
-          const response = await axios.post(`https://jobpartal-backend.onrender.comapi/Course/delete/${Id}`, {
+          const response = await axios.post(`https://jobpartal-backend.onrender.com/api/Course/delete/${Id}`, {
             headers: {
               'Content-Type': 'application/json',
               'TransactionKey': 'Es9JpGJyajaamahe5ZMoaumQG6lpEUylIhUR5ykAcA'
