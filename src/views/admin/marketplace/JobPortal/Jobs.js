@@ -44,7 +44,7 @@ const Jobs = () => {
     const location = useLocation();
 
 
-    const storedUserId = JSON.parse(localStorage.getItem("userId"));
+    const storedUserId = JSON.parse(localStorage.getItem("userId"))
 
     // useEffect(() => {
     //     const fetchJobs = async () => {
@@ -61,109 +61,47 @@ const Jobs = () => {
     //     fetchJobs();
     //   }, []);
 
+      console.log("sdcsdxsd",filteredData);
 
-    // useEffect(() => {
-    //     const fetchJobs = async () => {
-    //         try {
-    //             const response = await axios.get('https://jobpartal-backend.onrender.com/api/Application/Submitted');
-    //             setData(response.data);
-
-    //             const queryParams = new URLSearchParams(location.search);
-    //             const category = queryParams.get('category');
-                
-    //             // if (category) {
-    //             //     const filtered = response.data.filter(job => job.JobCategory.toLowerCase().trim() === category.toLowerCase().trim());
-    //             //     setfilteredData(filtered);
-    //             // } else {
-    //             //     setfilteredData(response.data);
-    //             // }
-    //             if (category) {
-    //                 const decodedCategory = decodeURIComponent(category).toLowerCase().trim();
-    //                 const filtered = response.data.filter(job => {
-    //                     const jobCategoryNormalized = job.JobCategory.toLowerCase().trim();
-    //                     return jobCategoryNormalized === decodedCategory;
-    //                 });
-
-
-    //                 if (filtered.length === 0) {
-    //                     setMessage("No jobs found for the selected category.");
-    //                 } else {
-    //                     setMessage("");
-    //                 }
-    //                 setfilteredData(filtered);
-    //             } else {
-    //                 setfilteredData(response.data);
-    //             }
-    //         } catch (err) {
-    //             //setError(err);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchJobs();
-    // }, [location.search]);
-
-    // useEffect(() => {
-    //     const postData = async() => {
-    //       const data = {
-    //          Name:"c2VsZWN0ICB0LnRvdGFsQXBwbHllZCB0b3RhbEFwcGxpZWQsZWouSWQgSm9iSWQsSm9iVGl0bGUsYy5OYW1lIEpvYkNhdGVnb3J5LFZhY2FuY2llcyxTYWxhcnlNaW4sU2FsYXJ5TWF4LApFeHBlcmllbmNlWWVhcixFeHBlcmllbmNlTW9udGgsRGVhZGxpbmUsRGF0ZUNyZWF0ZWQsZW0uQ29tcGFueU5hbWUsVGFnLGVqLkFjdGl2ZSwKbWouTmFtZSBKb2JUeXBlLEVkdWN0aW9uLGNhc3QoaXNudWxsKElzRmVhdHVyZWRKb2IsMCkgYXMgYml0KSBJc0ZlYXR1cmVkSm9iIGZyb20gKApzZWxlY3QgY291bnQoKikgdG90YWxBcHBseWVkLEpvYklkIGZyb20gVXNlckFwcGxpZWRKb2IKZ3JvdXAgYnkgSm9iSWQgKSB0CmpvaW4gRW1wbG95ZXJKT0JQb3N0IGVqIG9uIGVqLklkID0gdC5Kb2JJZApsZWZ0IG91dGVyIGpvaW4gTWFzdGVySm9iQ2F0ZWdvcnkgYyBvbiBjLklkPSBlai5Kb2JDYXRlZ29yeSAKbGVmdCBvdXRlciBqb2luIEVtcGxveWVyTWFzdGVyIGVtIG9uIGVtLklkPSBlai5Ga0VtcGxveWVySWQKbGVmdCBvdXRlciBqb2luIE1hc3RlckpvYlR5cGUgbWogb24gbWouSWQ9ZWouSm9iVHlwZQ=="
-    //       };
-    //       try{
-    //         const response = await axios.post('https://jobpartal-backend.onrender.com/api/Application/Submitted');
-    //         //const JobApplied = response.data.Response;
-               
-    //         // Calculate total applied applications
-    //           const JobApplied = response.data.Response;
-            
-    //           setfilteredData(JobApplied);
-    //       }catch(err){
-    //         //setError(err);
-    //       }finally{
-    //         setLoading(false);
-    //       }
-    //     }
-    //     postData();
-    //   },[])
 
     useEffect(() => {
         const fetchJobs = async () => {
           try {
             const response = await axios.get('https://jobpartal-backend.onrender.com/api/joblist');
-            setfilteredData(response.data);
+            const queryParams = new URLSearchParams(location.search);
+            const category = queryParams.get('category');
+            
+            if (category) {
+              const decodedCategory = decodeURIComponent(category).toLowerCase().trim();
+              const filtered = response.data.filter(job => {
+                const jobCategoryNormalized = job.JobCategory.toLowerCase().trim();
+                return jobCategoryNormalized === decodedCategory;
+              });
+    
+              if (filtered.length === 0) {
+                setMessage("No jobs found for the selected category.");
+              } else {
+                setMessage("");
+              }
+              setfilteredData(filtered);
+            } else {
+              setfilteredData(response.data);
+            }
           } catch (err) {
-            //setError(err);
+            toast.error("Failed to fetch jobs.");
           } finally {
             setLoading(false);
           }
         };
     
         fetchJobs();
-      }, []);
-
-      console.log("sdcsdxsd",filteredData);
-
- 
-
-
-    // const onChangeSearch = (e) => {
-    //     // getData();
-    //     if (e.target.value) {
-    //         const result = data.filter(value => {
-    //             return value?.lessonName ? value.lessonName.toLowerCase().includes(e.target.value.toLowerCase()) : ''
-    //         })
-    //         setfilteredData(result)
-    //     } else {
-    //         setfilteredData(data)
-    //     }
-
-    // }
+      }, [location.search]);
 
     return (
         <div className="row">
             <ToastContainer></ToastContainer>
             <div className="col-md-12">
-                <h4 className="f-700 mb-4">All Job</h4>
+                <h4 className="f-700 mb-4">Job</h4>
                 {message && (
                     <div className="form-group">
                         <div className="alert alert-danger" role="alert">

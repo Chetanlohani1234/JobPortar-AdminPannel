@@ -312,15 +312,17 @@ export default function UserReports() {
       </SimpleGrid>
 
       <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='20px'>
-        {/* <TotalSpent /> */}
-         <PieCard/>
-         <PieChartsTable/>
+        <TotalSpent />
+        <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
+
+
          {/* <DailyTraffic />  */}
         {/* <WeeklyRevenue /> */}
       </SimpleGrid>
 
       <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='20px'>
-        <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
+      <PieCard/>
+      <PieChartsTable/>
         {/* <DailyTraffic /> */}
         {/* <PieChartsTable/> */}
       </SimpleGrid>

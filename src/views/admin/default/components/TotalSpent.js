@@ -229,7 +229,7 @@
 //         </Flex>
 //         <Box minH='260px' minW='100%' mt='auto'>
 //           <LineChart
-//             chartData={chartData}
+//             chartData={lineChartDataTotalSpent}
 //             chartOptions={lineChartOptionsTotalSpent}
 //           />
 //         </Box>
@@ -238,68 +238,67 @@
 //   );
 // }
 
-
-import React, { useEffect, useState } from "react";
-import { Box, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import Card from "components/card/Card.js";
 import LineChart from "components/charts/LineChart";
+import React, { useEffect, useState } from "react";
 import axios from 'axios';
 
 export default function TotalSpent(props) {
   const { ...rest } = props;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
+
   const [chartData, setChartData] = useState([]);
-  const [months, setMonths] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = {
-        Name: "c2VsZWN0ICogZnJvbSAoc2VsZWN0IGNvdW50KCopIENvdXN0cywnTG9naW4nIFR5cGUsCkRBVEVOQU1FKG1vbnRoLERBVEVBREQobW9udGgsIERBVEVQQVJUKE1PTlRILERhdGVDcmVhdGVkKS0xLCBDQVNUKCcyMDA4LTAxLTAxJyBBUyBkYXRldGltZSkpKSBtb250aHMKZnJvbSBVc2VyTWFzdGVyIHdoZXJlIEF2YWlsYWJpbGl0eVRvSm9pbiBpcyBub3QgbnVsbApncm91cCBieSBEYXRlQ3JlYXRlZAp1bmlvbiBzZWxlY3QgY291bnQoKikgQ291c3RzLCdSZWdpc3RyYXRpb24nIFR5cGUsIERBVEVOQU1FKG1vbnRoLERBVEVQQVJUKE1PTlRILERhdGVDcmVhdGVkKS0xLCBDQVNUKCcyMDA4LTAxLTAxJyBBUyBkYXRldGltZSkpKSAgbW9udGhzCmZyb20gVXNlck1hc3RlciAKZ3JvdXAgYnkgRGF0ZUNyZWF0ZWQKKSB0"
+        Name: "c2VsZWN0ICogZnJvbSAoc2VsZWN0IGNvdW50KCopIENvdXN0cywnTG9naW4nIFR5cGUsCkRBVEVOQU1FKG1vbnRoLERBVEVBREQobW9udGgsIERBVEVQQVJUKE1PTlRILERhdGVDcmVhdGVkKS0xLCBDQVNUKCcyMDA4LTAxLTAxJyBBUyBkYXRldGltZSkpKSBtb250aHMKZnJvbSBVc2VyTWFzdGVyIHdoZXJlIEF2YWlsYWJpbGl0eVRvSm9pbiBpcyBub3QgbnVsbApncm91cCBieSBEYXRlQ3JlYXRlZAp1bmlvbiBzZWxlY3QgY291bnQoKikgQ291c3RzLCdSZWdpc3RyYXRpb24nIFR5cGUsIERBVEVOQU1FKG1vbnRoLERBVEVBREQobW9udGgsIERBVEVQQVJUKE1PTlRILERhdGVDcmVhdGVkKS0xLCBDQVNUKCcyMDA4LTAxLTAxJyBBUyBkYXRldGltZSkpKSAgbW9udGhzCmZyb20gVXNlck1hc3RlciAKZ3JvdXAgYnkgRGF0ZUNyZWF0ZWQKKSB0"
       };
       try {
         const response = await axios.post('https://jobpartal-backend.onrender.com/api/Login/Registration/detail', data);
-        console.log('API Response:', response.data.Response); // Debug statement
+        const datas = response.data.Response;
 
-        const { processedData, processedMonths } = processChartData(response.data.Response);
-        console.log('Processed Data:', processedData); // Debug statement
-        console.log('Processed Months:', processedMonths); // Debug statement
+        // Process data to structure it for the line chart
+        const loginData = [];
+        const registrationData = [];
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        months.forEach(month => {
+          const loginCount = datas.filter(item => item.Type === "Login" && item.months === month)
+                                 .reduce((acc, curr) => acc + parseInt(curr.Cousts), 0);
+          const registrationCount = datas.filter(item => item.Type === "Registration" && item.months === month)
+                                        .reduce((acc, curr) => acc + parseInt(curr.Cousts), 0);
+          console.log("fdfdc",loginCount);
+          loginData.push(loginCount);
+          registrationData.push(registrationCount);
+        });
 
-        setChartData(processedData);
-        setMonths(processedMonths);
-      } catch (err) {
-        console.error('Error fetching data:', err);
+    
+
+        setChartData([
+          {
+            name: "Logins",
+            data: loginData,
+          },
+          {
+            name: "Registrations",
+            data: registrationData,
+          },
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
   }, []);
-
-  const processChartData = (data) => {
-    const processedMonths = Array.from(new Set(data.map(item => item.months))).sort();
-    const loginData = processedMonths.map(month => {
-      const loginEntry = data.find(item => item.months === month && item.Type === "Login");
-      return loginEntry ? parseInt(loginEntry.Cousts, 10) : 0;
-    });
-    const registrationData = processedMonths.map(month => {
-      const registrationEntry = data.find(item => item.months === month && item.Type ===       "Registration");
-      return registrationEntry ? parseInt(registrationEntry.Cousts, 10) : 0;
-    });
-
-    return {
-      processedData: [
-        {
-          name: "Login",
-          data: loginData
-        },
-        {
-          name: "Registration",
-          data: registrationData
-        }
-      ],
-      processedMonths
-    };
-  };
 
   const lineChartOptionsTotalSpent = {
     chart: {
@@ -342,8 +341,8 @@ export default function TotalSpent(props) {
       type: "line",
     },
     xaxis: {
-      type: "categories",
-      categories: months,
+      type: "category",
+      categories: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       labels: {
         style: {
           colors: "#A3AED0",
@@ -366,17 +365,21 @@ export default function TotalSpent(props) {
           fontSize: "12px",
           fontWeight: "500",
         },
+        formatter: function (value) {
+          // Round the value to remove decimal points
+          return Math.round(value);
+        },
       },
     },
     legend: {
       show: true,
-      position: 'top',
-      horizontalAlign: 'right',
     },
     grid: {
       show: true,
-      borderColor: "#e7e7e7",
+      borderColor: "#E9ECEF",
+      strokeDashArray: 5,
     },
+    color: ["#7551FF", "#39B8FF"],
   };
 
   return (
@@ -389,27 +392,28 @@ export default function TotalSpent(props) {
       {...rest}>
       <Flex justify='space-between' ps='0px' pe='20px' pt='5px'>
         <Flex align='center' w='100%'>
-          <Text
-            color={textColor}
-            fontSize='34px'
-            textAlign='start'
-            fontWeight='700'
-            lineHeight='100%'>
-            Total Spent
-          </Text>
+          {/* Additional UI components can be added here */}
         </Flex>
       </Flex>
       <Flex w='100%' flexDirection={{ base: "column", lg: "row" }}>
+        <Flex flexDirection='column' me='20px' mt='28px'>
+          <Text
+            color={textColor}
+            fontSize='20px'
+            textAlign='start'
+            lineHeight='50%'>
+            Monthly
+          </Text>
+        </Flex>
         <Box minH='260px' minW='100%' mt='auto'>
-          <LineChart
-            chartData={chartData}
-            chartOptions={lineChartOptionsTotalSpent}
-          />
+          {chartData.length > 0 && (
+            <LineChart
+              chartData={chartData}
+              chartOptions={lineChartOptionsTotalSpent}
+            />
+          )}
         </Box>
       </Flex>
     </Card>
   );
 }
-
-
-
