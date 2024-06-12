@@ -397,13 +397,13 @@ export default function TotalSpent(props) {
       </Flex>
       <Flex w='100%' flexDirection={{ base: "column", lg: "row" }}>
         <Flex flexDirection='column' me='20px' mt='28px'>
-          <Text
+          {/* <Text
             color={textColor}
             fontSize='20px'
             textAlign='start'
             lineHeight='50%'>
             Monthly
-          </Text>
+          </Text> */}
         </Flex>
         <Box minH='260px' minW='100%' mt='auto'>
           {chartData.length > 0 && (
