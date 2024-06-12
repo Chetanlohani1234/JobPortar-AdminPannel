@@ -83,7 +83,7 @@ export default function UserReports() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const user = await axios.get('https://jobpartal-backend.onrender.comapi/User'); // Replace with your API endpoint
+        const user = await axios.get('https://jobpartal-backend.onrender.com/api/User'); // Replace with your API endpoint
         
         const users = user.data.Response;
 
@@ -102,7 +102,7 @@ export default function UserReports() {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const response = await axios.get('https://jobpartal-backend.onrender.comapi/joblist'); // Replace with your API endpoint
+        const response = await axios.get('https://jobpartal-backend.onrender.com/api/joblist'); // Replace with your API endpoint
         const jobs = response.data;
         setJobCount(jobs.length
           
@@ -122,7 +122,7 @@ export default function UserReports() {
   useEffect(() => {
     const fetchEmployer = async () => {
       try{
-        const response = await axios.get('https://jobpartal-backend.onrender.comapi/Employers');
+        const response = await axios.get('https://jobpartal-backend.onrender.com/api/Employers');
         const NoEmployer = response.data.Response;
         setEmployerCount(NoEmployer.length);
         setLoading(false);
@@ -145,7 +145,7 @@ export default function UserReports() {
          Name:"c2VsZWN0ICB0LnRvdGFsQXBwbHllZCB0b3RhbEFwcGxpZWQsZWouSWQgSm9iSWQsSm9iVGl0bGUsYy5OYW1lIEpvYkNhdGVnb3J5LFZhY2FuY2llcyxTYWxhcnlNaW4sU2FsYXJ5TWF4LApFeHBlcmllbmNlWWVhcixFeHBlcmllbmNlTW9udGgsRGVhZGxpbmUsRGF0ZUNyZWF0ZWQsZW0uQ29tcGFueU5hbWUsVGFnLGVqLkFjdGl2ZSwKbWouTmFtZSBKb2JUeXBlLEVkdWN0aW9uLGNhc3QoaXNudWxsKElzRmVhdHVyZWRKb2IsMCkgYXMgYml0KSBJc0ZlYXR1cmVkSm9iIGZyb20gKApzZWxlY3QgY291bnQoKikgdG90YWxBcHBseWVkLEpvYklkIGZyb20gVXNlckFwcGxpZWRKb2IKZ3JvdXAgYnkgSm9iSWQgKSB0CmpvaW4gRW1wbG95ZXJKT0JQb3N0IGVqIG9uIGVqLklkID0gdC5Kb2JJZApsZWZ0IG91dGVyIGpvaW4gTWFzdGVySm9iQ2F0ZWdvcnkgYyBvbiBjLklkPSBlai5Kb2JDYXRlZ29yeSAKbGVmdCBvdXRlciBqb2luIEVtcGxveWVyTWFzdGVyIGVtIG9uIGVtLklkPSBlai5Ga0VtcGxveWVySWQKbGVmdCBvdXRlciBqb2luIE1hc3RlckpvYlR5cGUgbWogb24gbWouSWQ9ZWouSm9iVHlwZQ=="
       };
       try{
-        const response = await axios.post('https://jobpartal-backend.onrender.comapi/Application/Submitted');
+        const response = await axios.post('https://jobpartal-backend.onrender.com/api/Application/Submitted');
         //const JobApplied = response.data.Response;
            
         // Calculate total applied applications
