@@ -390,21 +390,44 @@ export default function TotalSpent(props) {
       w='100%'
       mb='0px'
       {...rest}>
-      <Flex justify='space-between' ps='0px' pe='20px' pt='5px'>
-        <Flex align='center' w='100%'>
-          {/* Additional UI components can be added here */}
-        </Flex>
+      <Flex
+        px={{ base: "0px", "2xl": "10px" }}
+        justifyContent='space-between'
+        alignItems='center'
+        w='100%'
+        mb='8px'>
+        <Text color={textColor} fontSize='md' fontWeight='600' mt='4px' marginBottom='100px'>
+        Login & Registration Data
+        </Text>
+
+          <div className="calendarWrap">
+
+          {/* <input
+            value={`${format(range[0].startDate, "MM/dd/yyyy")} to ${format(range[0].endDate, "MM/dd/yyyy")}`}
+            readOnly
+            className="inputBox"
+            onClick={ () => setOpen(open => !open) }
+          />
+
+          <div ref={refOne}>
+            {open && 
+              <DateRangePicker
+                onChange={item => setRange([item.selection])}
+                editableDateInputs={true}
+                moveRangeOnFirstSelection={false}
+                ranges={range}
+                months={1}
+                direction="vertical"
+                className="calendarElement"
+              />
+            }
+          </div> */}
+
+          </div>
+
       </Flex>
       <Flex w='100%' flexDirection={{ base: "column", lg: "row" }}>
-        <Flex flexDirection='column' me='20px' mt='28px'>
-          {/* <Text
-            color={textColor}
-            fontSize='20px'
-            textAlign='start'
-            lineHeight='50%'>
-            Monthly
-          </Text> */}
-        </Flex>
+
         <Box minH='260px' minW='100%' mt='auto'>
           {chartData.length > 0 && (
             <LineChart

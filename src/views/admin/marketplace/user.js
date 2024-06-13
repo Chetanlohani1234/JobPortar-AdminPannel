@@ -139,6 +139,31 @@ const User = () => {
                                             </svg>
                                         </a>
 
+                                    <a  className="mx-2">
+                                        <svg
+                                            width="17"
+                                            height="12"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M12 4.5C7.30558 4.5 3.5 7.30558 3.5 12C3.5 16.6944 7.30558 19.5 12 19.5C16.6944 19.5 20.5 16.6944 20.5 12C20.5 7.30558 16.6944 4.5 12 4.5ZM12 18C8.41015 18 5.5 15.0899 5.5 12C5.5 8.91015 8.41015 6 12 6C15.0899 6 18 8.91015 18 12C18 15.0899 15.0899 18 12 18Z"
+                                                stroke="#228B22"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                            <path
+                                                d="M12 9.5C10.067 9.5 8.5 11.067 8.5 13C8.5 14.933 10.067 16.5 12 16.5C13.933 16.5 15.5 14.933 15.5 13C15.5 11.067 13.933 9.5 12 9.5Z"
+                                                stroke="#228B22"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </a>
+
                                     </span>
                                 </td>
                             </tr>
