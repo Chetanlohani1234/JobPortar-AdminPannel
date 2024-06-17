@@ -256,3 +256,27 @@
     margin-bottom: 10px;
 }
   
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filter-row .form-control {
+  width: 100%;
+  margin-right: 10px;
+}
+
+.download-btn {
+  background-color: #228B22;
+  border-color: #228B22;
+  color: white;
+  font-weight: 600;
+}
+
+.download-btn:hover {
+  background-color: #196619;
+  border-color: #196619;
+}

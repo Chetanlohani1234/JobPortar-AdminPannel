@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios';
+import * as XLSX from 'xlsx';
 
 let page_no = 1;
 let limit = 15;
@@ -19,6 +20,13 @@ const Employer = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
+    const [name, setName] = useState("");
+    const [address, setAddress] = useState("");
+    const [type,setType] = useState("");
+    const [masterSearch,setMasterSearch] = useState("");
+    const [uniqueAddress, setUniqueAddress] = useState([]);
+    const [uniqueType,setUniqueType] = useState([]);
+
 
     const storedUserId = JSON.parse(localStorage.getItem("userId"));
 
@@ -26,7 +34,11 @@ const Employer = () => {
         const fetchJobs = async () => {
           try {
             const response = await axios.get('https://jobpartal-backend.onrender.com/api/Employers');
-            setfilteredData(response.data.Response);
+            const users = response.data.Response;
+            setData(users);
+            setfilteredData(users);
+            setUniqueAddress([...new Set(users.map(user => user.Address))]);
+            setUniqueType([...new Set(users.map(user => user.OrganizationType))])
           } catch (err) {
             //setError(err);
           } finally {
@@ -37,23 +49,55 @@ const Employer = () => {
         fetchJobs();
       }, []);
 
+      
+      useEffect(() => {
+        filterData();
+    }, [name, type,address,masterSearch]);
+
       console.log("sdcsdxsd",filteredData);
 
+
+      const filterData = () => {
+        let result = data;
+
+        if (masterSearch) {
+            result = result.filter(user =>
+                user.CompanyName.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.OrganizationType.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.Address.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.OrganizationSize.toLowerCase().includes(masterSearch.toLowerCase())
+
+            );
+        } else {
+            if (name) {
+                result = result.filter(user => 
+                    user.CompanyName.toLowerCase().includes(name.toLowerCase())
+                );
+            }
+
+            if (type) {
+                result = result.filter(user =>
+                    user.OrganizationType === type
+                );
+            }
+
+            if (address) {
+                result = result.filter(user =>
+                    user.Address === address
+                );
+            }
+        }
+
+        setfilteredData(result);
+    };
+
+      const handleDownload = () => {
+        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+        XLSX.writeFile(workbook, "FilteredUsers.xlsx");
+    };
  
-
-
-    // const onChangeSearch = (e) => {
-    //     // getData();
-    //     if (e.target.value) {
-    //         const result = data.filter(value => {
-    //             return value?.lessonName ? value.lessonName.toLowerCase().includes(e.target.value.toLowerCase()) : ''
-    //         })
-    //         setfilteredData(result)
-    //     } else {
-    //         setfilteredData(data)
-    //     }
-
-    // }
 
     return (
         <div className="row">
@@ -67,14 +111,68 @@ const Employer = () => {
                         </div>
                     </div>
                 )}
-                <div className="table-header d-flex align-items-center">
-                    <div className="table-search">
+   
+
+                <div className="table-header d-flex align-items-center mb-3 filter-row">
+                        
+  
+                    
+                        <div className="row w-100">
+                        <div className="col-md-3">
+                            <input
+                                type="text"
+                                placeholder="Search ... "
+                                value={masterSearch}
+                                onChange={e => setMasterSearch(e.target.value)}
+                                className="form-control"
+                            />
+                          </div>
+    
+                         <div className="col-md-3">
+                            <input
+                                type="text"
+                                placeholder="Search Company Name ..."
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                className="form-control"
+                            />
+                         </div>   
+                         <div className="col-md-3">
+                            <select
+                                value={address}
+                                onChange={e => setAddress(e.target.value)}
+                                className="form-control"
+                            >
+                                <option value="">Select Address</option>
+                                {uniqueAddress.map(add => (
+                                    <option key={add} value={add}>
+                                        {add}
+                                    </option>
+                                ))}
+                            </select>
+                         </div>   
+                         <div className="col-md-3">
+                            <select
+                               value={type}
+                               onChange={e => setType(e.target.value)}
+                               className="form-control"
+                            >
+                               <option value="">Select Organization Type</option>
+                               {uniqueType.map(type => (
+                                <option key={type} value={type}>{type}</option>
+                               ))
+    
+                               }
+                            </select>
+                          </div>     
+                        </div>
+    
+                        <button className="btn btn-primary ms-3 download-btn" 
+                        onClick={handleDownload}
+                        >
+                            Download
+                        </button>
                     </div>
-
-                    <form class="d-flex align-items-center ms-auto">
-
-                    </form>
-                </div>
                 <div className="col-lg-6 m-auto">
                     {loading && (
                         <span className="spinner-border spinner-border-sm"></span>
@@ -86,6 +184,7 @@ const Employer = () => {
                             <th scope="col">Company Name</th>
                             <th scope="col">Organization Size</th>
                             <th scope="col">Organization Type</th>
+                            <th scope="col">Address</th>
                             <th scope="col">Website Link</th>
                             <th scope="col">LinkedIn</th>
                             {/* <th scope="col">Description</th> */}
@@ -101,6 +200,7 @@ const Employer = () => {
                                 <td>{job.CompanyName}</td>
                                 <td>{job.OrganizationSize}</td>
                                 <td>{job.OrganizationType}</td>
+                                <td>{job.Address}</td>
                                 {/* <td>{job.SalaryMin} to {job.SalaryMax}</td> */}
                                 {/* <td>{(job.SalaryMin / 100000).toFixed(2)} Lakh to {(job.SalaryMax / 100000).toFixed(2)} Lakh</td> */}
                                 <td>{job.WebsiteLink}</td>

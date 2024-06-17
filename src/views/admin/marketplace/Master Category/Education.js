@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 //import './Employers.css'
 import 'react-toastify/dist/ReactToastify.css';
 
+import * as XLSX from 'xlsx';
 import axios from 'axios';
 
 let page_no = 1;
@@ -19,6 +20,10 @@ const Education = () => {
     const [message, setMessage] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+
+    const [category,setCategory] = useState("");
+    const [masterSearch,setMasterSearch] = useState("");
+    const [uniqueCategory,setUniqueCategory] = useState([]);
 
 
     const storedUserId = JSON.parse(localStorage.getItem("userId"));
@@ -50,8 +55,10 @@ const Education = () => {
                
             // Calculate total applied applications
               const JobApplied = response.data.Response;
-            
+              setData(JobApplied);
               setfilteredData(JobApplied);
+              setUniqueCategory([...new Set(JobApplied.map(user => user.Name))]);
+
           }catch(err){
             setError(err);
           }finally{
@@ -66,18 +73,6 @@ const Education = () => {
  
 
 
-    // const onChangeSearch = (e) => {
-    //     // getData();
-    //     if (e.target.value) {
-    //         const result = data.filter(value => {
-    //             return value?.lessonName ? value.lessonName.toLowerCase().includes(e.target.value.toLowerCase()) : ''
-    //         })
-    //         setfilteredData(result)
-    //     } else {
-    //         setfilteredData(data)
-    //     }
-
-    // }
 
     const deleteEducation = async (Id, name) => {
         setLoading(true);
@@ -109,6 +104,42 @@ const Education = () => {
         }
       };
 
+      useEffect(() => {
+        filterData();
+    }, [category, masterSearch]);
+
+      
+    const filterData = () => {
+      let result = data;
+
+
+
+      if (masterSearch) {
+          result = result.filter(user =>
+              user.Name.toLowerCase().includes(masterSearch.toLowerCase())
+          );
+      } else {
+    
+          if (category) {
+              result = result.filter(user =>
+                  user.Name === category
+              );
+              console.log("fgfgfg",result);
+          }
+      }
+
+      
+
+      setfilteredData(result);
+  };
+
+  const handleDownload = () => {
+      const worksheet = XLSX.utils.json_to_sheet(filteredData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Jobs");
+      XLSX.writeFile(workbook, "FilteredJobs.xlsx");
+  };
+
     return (
         <div className="row">
             <ToastContainer></ToastContainer>
@@ -135,6 +166,44 @@ const Education = () => {
                         <span className="spinner-border spinner-border-sm"></span>
                     )}
                 </div>
+
+                <div className="table-header d-flex align-items-center mb-3 filter-row">
+                        
+  
+                    
+                        <div className="row w-100">
+                        <div className="col-md-3">
+                            <input
+                                type="text"
+                                placeholder="Search ... "
+                                value={masterSearch}
+                                onChange={e => setMasterSearch(e.target.value)}
+                                className="form-control"
+                            />
+                          </div>   
+                         <div className="col-md-3">
+                            <select
+                               value={category}
+                               onChange={e => setCategory(e.target.value)}
+                               className="form-control"
+                            >
+                               <option value="">Select Education</option>
+                               {uniqueCategory.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                               ))
+    
+                               }
+                            </select>
+                          </div>     
+                        </div>
+    
+                        <button className="btn btn-primary ms-3 download-btn" 
+                        onClick={handleDownload}
+                        >
+                            Download
+                        </button>
+                </div>
+
                 <table class="table table-striped">
                     <thead>
                         <tr>

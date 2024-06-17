@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios';
+import * as XLSX from 'xlsx';
 
 let page_no = 1;
 let limit = 15;
@@ -19,6 +20,13 @@ const Course = () => {
     const [message, setMessage] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+
+    const [education,setEducation] = useState("");
+    const [course,setCourse] = useState("");
+    const [masterSearch,setMasterSearch] = useState("");
+    const [uniqueEducation,setUniqueEducation] = useState([]);
+    const [uniqueCourse,setUniqueCourse] = useState([]);
+
 
 
     const storedUserId = JSON.parse(localStorage.getItem("userId"));
@@ -50,8 +58,12 @@ const Course = () => {
                
             // Calculate total applied applications
               const JobApplied = response.data.Response;
-            
+              setData(JobApplied);
               setfilteredData(JobApplied);
+              setUniqueEducation([...new Set(JobApplied.map(user => user.Name))]);
+              setUniqueCourse([...new Set(JobApplied.map(user => user.Code))]);
+
+
           }catch(err){
             setError(err);
           }finally{
@@ -65,19 +77,6 @@ const Course = () => {
 
  
 
-
-    // const onChangeSearch = (e) => {
-    //     // getData();
-    //     if (e.target.value) {
-    //         const result = data.filter(value => {
-    //             return value?.lessonName ? value.lessonName.toLowerCase().includes(e.target.value.toLowerCase()) : ''
-    //         })
-    //         setfilteredData(result)
-    //     } else {
-    //         setfilteredData(data)
-    //     }
-
-    // }
 
     const deleteCourse = async (Id, name) => {
         setLoading(true);
@@ -109,6 +108,50 @@ const Course = () => {
         }
       };
 
+      useEffect(() => {
+        filterData();
+    }, [education,course, masterSearch]);
+
+      
+    const filterData = () => {
+      let result = data;
+
+
+
+      if (masterSearch) {
+          result = result.filter(user =>
+              user.Name.toLowerCase().includes(masterSearch.toLowerCase()) ||
+              user.Code.toLowerCase().includes(masterSearch.toLowerCase())
+          );
+      } else {
+    
+          if (education) {
+              result = result.filter(user =>
+                  user.Name === education
+              );
+              console.log("fgfgfg",result);
+          } 
+            if (course) {
+              result = result.filter(user =>
+                  user.Code === course
+              );
+              console.log("fgfgfg",result);
+          }
+                   
+      }
+
+      
+
+      setfilteredData(result);
+  };
+
+  const handleDownload = () => {
+      const worksheet = XLSX.utils.json_to_sheet(filteredData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Jobs");
+      XLSX.writeFile(workbook, "FilteredJobs.xlsx");
+  };
+
     return (
         <div className="row">
             <ToastContainer></ToastContainer>
@@ -135,6 +178,60 @@ const Course = () => {
                         <span className="spinner-border spinner-border-sm"></span>
                     )}
                 </div>
+
+                
+                <div className="table-header d-flex align-items-center mb-3 filter-row">
+                        
+  
+                    
+                        <div className="row w-100">
+                        <div className="col-md-3">
+                            <input
+                                type="text"
+                                placeholder="Search ... "
+                                value={masterSearch}
+                                onChange={e => setMasterSearch(e.target.value)}
+                                className="form-control"
+                            />
+                          </div>   
+                         <div className="col-md-3">
+                            <select
+                               value={education}
+                               onChange={e => setEducation(e.target.value)}
+                               className="form-control"
+                            >
+                               <option value="">Select Education</option>
+                               {uniqueEducation.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                               ))
+    
+                               }
+                            </select>
+                          </div>
+                          <div className="col-md-3">
+                            <select
+                               value={course}
+                               onChange={e => setCourse(e.target.value)}
+                               className="form-control"
+                            >
+                               <option value="">Select Course</option>
+                               {uniqueCourse.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                               ))
+    
+                               }
+                            </select>
+                          </div>     
+                        </div>
+    
+                        <button className="btn btn-primary ms-3 download-btn" 
+                        onClick={handleDownload}
+                        >
+                            Download
+                        </button>
+                </div>
+
+
                 <table class="table table-striped">
                     <thead>
                         <tr>

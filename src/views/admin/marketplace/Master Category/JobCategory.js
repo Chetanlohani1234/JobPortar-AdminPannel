@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 //import './Employers.css'
 import 'react-toastify/dist/ReactToastify.css';
-
+import * as XLSX from 'xlsx';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 
@@ -21,6 +21,11 @@ const JobCategory = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const {Id} = useParams();
+
+    const [category,setCategory] = useState("");
+    const [masterSearch,setMasterSearch] = useState("");
+    const [uniqueCategory,setUniqueCategory] = useState([]);
+  
 
 
 
@@ -53,7 +58,9 @@ const JobCategory = () => {
                
             // Calculate total applied applications
               const JobApplied = response.data.Response;
+              setData(JobApplied);
               setfilteredData(JobApplied);
+              setUniqueCategory([...new Set(JobApplied.map(user => user.Name))]);
           }catch(err){
             setError(err);
           }finally{
@@ -94,6 +101,42 @@ const JobCategory = () => {
           setLoading(false);
         }
       };
+
+      useEffect(() => {
+        filterData();
+    }, [category, masterSearch]);
+
+      
+    const filterData = () => {
+      let result = data;
+
+
+
+      if (masterSearch) {
+          result = result.filter(user =>
+              user.Name.toLowerCase().includes(masterSearch.toLowerCase())
+          );
+      } else {
+    
+          if (category) {
+              result = result.filter(user =>
+                  user.Name === category
+              );
+              console.log("fgfgfg",result);
+          }
+      }
+
+      
+
+      setfilteredData(result);
+  };
+
+  const handleDownload = () => {
+      const worksheet = XLSX.utils.json_to_sheet(filteredData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Jobs");
+      XLSX.writeFile(workbook, "FilteredJobs.xlsx");
+  };
  
 
 
@@ -123,6 +166,43 @@ const JobCategory = () => {
                         <span className="spinner-border spinner-border-sm"></span>
                     )}
                 </div>
+                <div className="table-header d-flex align-items-center mb-3 filter-row">
+                        
+  
+                    
+                        <div className="row w-100">
+                        <div className="col-md-3">
+                            <input
+                                type="text"
+                                placeholder="Search ... "
+                                value={masterSearch}
+                                onChange={e => setMasterSearch(e.target.value)}
+                                className="form-control"
+                            />
+                          </div>   
+                         <div className="col-md-3">
+                            <select
+                               value={category}
+                               onChange={e => setCategory(e.target.value)}
+                               className="form-control"
+                            >
+                               <option value="">Select Job Category</option>
+                               {uniqueCategory.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                               ))
+    
+                               }
+                            </select>
+                          </div>     
+                        </div>
+    
+                        <button className="btn btn-primary ms-3 download-btn" 
+                        onClick={handleDownload}
+                        >
+                            Download
+                        </button>
+                </div>
+
                 <table class="table table-striped">
                     <thead>
                         <tr>

@@ -29,6 +29,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
+import * as XLSX from 'xlsx';
+
 let page_no = 1;
 let limit = 15;
 let search = "";
@@ -37,11 +39,21 @@ let status = "";
 const Jobs = () => {
     const [data, setData] = useState([]);
     const [filteredData, setfilteredData] = useState([]);
+    const [filtereedData,setfiltereedData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const location = useLocation();
+
+    const [jobTitle, setJobTitle] = useState("");
+    const [category,setCategory] = useState("");
+    const [salary,setSalary] = useState("");
+    const [masterSearch,setMasterSearch] = useState("");
+    const [uniqueJobTitle, setUniqueJobTitle] = useState([]);
+    const [uniqueCategory,setUniqueCategory] = useState([]);
+    const [uniqueSalary,setUniqueSalary] = useState([]);
+
 
 
     const storedUserId = JSON.parse(localStorage.getItem("userId"))
@@ -64,38 +76,116 @@ const Jobs = () => {
       console.log("sdcsdxsd",filteredData);
 
 
-    useEffect(() => {
-        const fetchJobs = async () => {
-          try {
-            const response = await axios.get('https://jobpartal-backend.onrender.com/api/joblist');
-            const queryParams = new URLSearchParams(location.search);
-            const category = queryParams.get('category');
+    // useEffect(() => {
+    //     const fetchJobs = async () => {
+    //       try {
+    //         const response = await axios.get('https://jobpartal-backend.onrender.com/api/joblist');
+    //         const queryParams = new URLSearchParams(location.search);
+    //         const category = queryParams.get('category');
             
-            if (category) {
-              const decodedCategory = decodeURIComponent(category).toLowerCase().trim();
-              const filtered = response.data.filter(job => {
-                const jobCategoryNormalized = job.JobCategory.toLowerCase().trim();
-                return jobCategoryNormalized === decodedCategory;
-              });
+    //         if (category) {
+    //           const decodedCategory = decodeURIComponent(category).toLowerCase().trim();
+    //           const filtered = response.data.filter(job => {
+    //             const jobCategoryNormalized = job.JobCategory.toLowerCase().trim();
+    //             return jobCategoryNormalized === decodedCategory;
+    //           });
     
-              if (filtered.length === 0) {
-                setMessage("No jobs found for the selected category.");
+    //           if (filtered.length === 0) {
+    //             setMessage("No jobs found for the selected category.");
+    //           } else {
+    //             setMessage("");
+    //           }
+    //           setfilteredData(filtered);
+    //         } else {
+    //           const users = response.data;
+    //           setfiltereedData(users);
+    //           setUniqueJobTitle([...new Set(users.map(user => user.JobTitle))]);
+    //           setUniqueCategory([...new Set(users.map(user => user.JobCategory))])
+    //           setUniqueSalary([...new Set(users.map(user => user.OrganizationType))])
+
+    //         }
+    //       } catch (err) {
+    //         toast.error("Failed to fetch jobs.");
+    //       } finally {
+    //         setLoading(false);
+    //       }
+    //     };
+    
+    //     fetchJobs();
+    //   }, [location.search]);
+
+    useEffect(() => {
+      const fetchJobs = async () => {
+          try {
+              const response = await axios.get('https://jobpartal-backend.onrender.com/api/joblist');
+              const queryParams = new URLSearchParams(location.search);
+              const categoryParam = queryParams.get('category');
+
+              if (categoryParam) {
+                  const decodedCategory = decodeURIComponent(categoryParam).toLowerCase().trim();
+                  const filtered = response.data.filter(job => job.JobCategory.toLowerCase().trim() === decodedCategory);
+
+                  if (filtered.length === 0) {
+                      setMessage("No jobs found for the selected category.");
+                  } else {
+                      setMessage("");
+                  }
+                  setfilteredData(filtered);
               } else {
-                setMessage("");
+                  setData(response.data);
+                  setfilteredData(response.data);
+                  setUniqueJobTitle([...new Set(response.data.map(user => user.JobTitle))]);
+                  setUniqueCategory([...new Set(response.data.map(user => user.JobCategory))]);
               }
-              setfilteredData(filtered);
-            } else {
-              setfilteredData(response.data);
-            }
           } catch (err) {
-            toast.error("Failed to fetch jobs.");
+              toast.error("Failed to fetch jobs.");
           } finally {
-            setLoading(false);
+              setLoading(false);
           }
-        };
-    
-        fetchJobs();
-      }, [location.search]);
+      };
+
+      fetchJobs();
+  }, [location.search]);
+
+  useEffect(() => {
+      filterData();
+  }, [category, jobTitle, masterSearch]);
+
+  const filterData = () => {
+      let result = data;
+
+      if (masterSearch) {
+          result = result.filter(user =>
+              user.JobTitle.toLowerCase().includes(masterSearch.toLowerCase()) ||
+              user.JobCategory.toLowerCase().includes(masterSearch.toLowerCase()) ||
+              user.SalaryMin.toLowerCase().includes(masterSearch.toLowerCase()) ||
+              user.SalaryMax.toLowerCase().includes(masterSearch.toLowerCase()) ||
+              user.ExperienceYear.toLowerCase().includes(masterSearch.toLowerCase())
+          );
+      } else {
+          if (jobTitle) {
+              result = result.filter(user =>
+                  user.JobTitle === jobTitle
+              );
+          }
+
+          if (category) {
+              result = result.filter(user =>
+                  user.JobCategory === category
+              );
+          }
+      }
+
+      setfilteredData(result);
+  };
+
+  const handleDownload = () => {
+      const worksheet = XLSX.utils.json_to_sheet(filteredData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Jobs");
+      XLSX.writeFile(workbook, "FilteredJobs.xlsx");
+  };
+ 
 
     return (
         <div className="row">
@@ -109,14 +199,61 @@ const Jobs = () => {
                         </div>
                     </div>
                 )}
-                <div className="table-header d-flex align-items-center">
-                    <div className="table-search">
-                    </div>
-
-                    <form class="d-flex align-items-center ms-auto">
-
-                    </form>
+   
+                <div className="table-header d-flex align-items-center mb-3 filter-row">
+                        
+  
+                    
+                        <div className="row w-100">
+                        <div className="col-md-3">
+                            <input
+                                type="text"
+                                placeholder="Search ... "
+                                value={masterSearch}
+                                onChange={e => setMasterSearch(e.target.value)}
+                                className="form-control"
+                            />
+                          </div>
+    
+       
+                         <div className="col-md-3">
+                            <select
+                                value={jobTitle}
+                                onChange={e => setJobTitle(e.target.value)}
+                                className="form-control"
+                            >
+                                <option value="">Select Job Title</option>
+                                {uniqueJobTitle.map(title => (
+                                    <option key={title} value={title}>
+                                        {title}
+                                    </option>
+                                ))}
+                            </select>
+                         </div>   
+                         <div className="col-md-3">
+                            <select
+                               value={category}
+                               onChange={e => setCategory(e.target.value)}
+                               className="form-control"
+                            >
+                               <option value="">Select Job Category</option>
+                               {uniqueCategory.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                               ))
+    
+                               }
+                            </select>
+                          </div>     
+                        </div>
+    
+                        <button className="btn btn-primary ms-3 download-btn" 
+                        onClick={handleDownload}
+                        >
+                            Download
+                        </button>
                 </div>
+
+
                 <div className="col-lg-6 m-auto">
                     {loading && (
                         <span className="spinner-border spinner-border-sm"></span>

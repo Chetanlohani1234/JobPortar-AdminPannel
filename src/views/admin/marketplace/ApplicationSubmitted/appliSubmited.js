@@ -28,6 +28,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios';
 
+import * as XLSX from 'xlsx';
+import { setDate } from "date-fns";
+
 let page_no = 1;
 let limit = 15;
 let search = "";
@@ -40,6 +43,15 @@ const AppliSubmitted = () => {
     const [message, setMessage] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+
+
+    const [jobTitle, setJobTitle] = useState("");
+    const [category,setCategory] = useState("");
+    const [salary,setSalary] = useState("");
+    const [masterSearch,setMasterSearch] = useState("");
+    const [uniqueJobTitle, setUniqueJobTitle] = useState([]);
+    const [uniqueCategory,setUniqueCategory] = useState([]);
+    const [uniqueSalary,setUniqueSalary] = useState([]);
 
 
     const storedUserId = JSON.parse(localStorage.getItem("userId"));
@@ -71,8 +83,10 @@ const AppliSubmitted = () => {
                
             // Calculate total applied applications
               const JobApplied = response.data.Response;
-            
+              setData(JobApplied);
               setfilteredData(JobApplied);
+              setUniqueJobTitle([...new Set(JobApplied.map(user => user.JobTitle))]);
+             setUniqueCategory([...new Set(JobApplied.map(user => user.JobCategory))]);
           }catch(err){
             //setError(err);
           }finally{
@@ -84,21 +98,49 @@ const AppliSubmitted = () => {
 
       console.log("sdcsdxsd",filteredData);
 
- 
+      useEffect(() => {
+        filterData();
+    }, [category, jobTitle, masterSearch]);
+  
+    const filterData = () => {
+        let result = data;
 
 
-    // const onChangeSearch = (e) => {
-    //     // getData();
-    //     if (e.target.value) {
-    //         const result = data.filter(value => {
-    //             return value?.lessonName ? value.lessonName.toLowerCase().includes(e.target.value.toLowerCase()) : ''
-    //         })
-    //         setfilteredData(result)
-    //     } else {
-    //         setfilteredData(data)
-    //     }
+  
+        if (masterSearch) {
+            result = result.filter(user =>
+                user.JobTitle.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.JobCategory.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.SalaryMin.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.SalaryMax.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.ExperienceYear.toLowerCase().includes(masterSearch.toLowerCase())
+            );
+        } else {
+            if (jobTitle) {
+                result = result.filter(user =>
+                    user.JobTitle === jobTitle
+                );
+            }
+  
+            if (category) {
+                result = result.filter(user =>
+                    user.JobCategory === category
+                );
+                console.log("fgfgfg",result);
+            }
+        }
 
-    // }
+        
+  
+        setfilteredData(result);
+    };
+  
+    const handleDownload = () => {
+        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Jobs");
+        XLSX.writeFile(workbook, "FilteredJobs.xlsx");
+    };
 
     return (
         <div className="row">
@@ -112,14 +154,60 @@ const AppliSubmitted = () => {
                         </div>
                     </div>
                 )}
-                <div className="table-header d-flex align-items-center">
-                    <div className="table-search">
-                    </div>
 
-                    <form class="d-flex align-items-center ms-auto">
-
-                    </form>
+                <div className="table-header d-flex align-items-center mb-3 filter-row">
+                        
+  
+                    
+                        <div className="row w-100">
+                        <div className="col-md-3">
+                            <input
+                                type="text"
+                                placeholder="Search ... "
+                                value={masterSearch}
+                                onChange={e => setMasterSearch(e.target.value)}
+                                className="form-control"
+                            />
+                          </div>
+    
+       
+                         <div className="col-md-3">
+                            <select
+                                value={jobTitle}
+                                onChange={e => setJobTitle(e.target.value)}
+                                className="form-control"
+                            >
+                                <option value="">Select Job Title</option>
+                                {uniqueJobTitle.map(title => (
+                                    <option key={title} value={title}>
+                                        {title}
+                                    </option>
+                                ))}
+                            </select>
+                         </div>   
+                         <div className="col-md-3">
+                            <select
+                               value={category}
+                               onChange={e => setCategory(e.target.value)}
+                               className="form-control"
+                            >
+                               <option value="">Select Job Category</option>
+                               {uniqueCategory.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                               ))
+    
+                               }
+                            </select>
+                          </div>     
+                        </div>
+    
+                        <button className="btn btn-primary ms-3 download-btn" 
+                        onClick={handleDownload}
+                        >
+                            Download
+                        </button>
                 </div>
+     
                 <div className="col-lg-6 m-auto">
                     {loading && (
                         <span className="spinner-border spinner-border-sm"></span>

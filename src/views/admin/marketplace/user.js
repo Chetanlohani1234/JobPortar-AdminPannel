@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 //import './Employers.css'
 import 'react-toastify/dist/ReactToastify.css';
+import './User.css'
 
 import axios from 'axios';
+import * as XLSX from 'xlsx';
 
 let page_no = 1;
 let limit = 15;
@@ -19,6 +21,16 @@ const User = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
+    const [name, setName] = useState("");
+    const [designation, setDesignation] = useState("");
+    const [location,setLocation] = useState("");
+    const [category, setCategory] = useState("");
+    const categories = ["All", "Designation", "Location"];
+
+    const [masterSearch,setMasterSearch] = useState("");
+    const [uniqueDesignations, setUniqueDesignations] = useState([]);
+    const [uniqueLocation,setUniqueLocation] = useState([]);
+
 
     const storedUserId = JSON.parse(localStorage.getItem("userId"));
 
@@ -26,7 +38,11 @@ const User = () => {
         const fetchJobs = async () => {
           try {
             const response = await axios.get('https://jobpartal-backend.onrender.com/api/User');
-            setfilteredData(response.data.Response);
+            const users = response.data.Response;
+            setData(users);
+            setfilteredData(users);
+            setUniqueDesignations([...new Set(users.map(user => user.Designation))]);
+            setUniqueLocation([...new Set(users.map(user => user.CurrentLocation))])
           } catch (err) {
             //setError(err);
           } finally {
@@ -39,27 +55,60 @@ const User = () => {
 
       console.log("sdcsdxsd",filteredData);
 
- 
+      useEffect(() => {
+        filterData();
+    }, [name, designation,location,masterSearch]);
+
+    const filterData = () => {
+        let result = data;
+
+        if (masterSearch) {
+            result = result.filter(user =>
+                user.UserName.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.EmailAddress.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.MobileNumber.toLowerCase().includes(masterSearch.toLowerCase()) ||
+                user.CurrentLocation.toLowerCase().includes(masterSearch.toLowerCase())||
+                user.Designation.toLowerCase().includes(masterSearch.toLowerCase())
+
+            );
+        } else {
+            if (name) {
+                result = result.filter(user => 
+                    user.UserName.toLowerCase().includes(name.toLowerCase())
+                );
+            }
+
+            if (designation) {
+                result = result.filter(user =>
+                    user.Designation === designation
+                );
+            }
+
+            if (location) {
+                result = result.filter(user =>
+                    user.CurrentLocation === location
+                );
+            }
+        }
+
+        setfilteredData(result);
+    };
 
 
-    // const onChangeSearch = (e) => {
-    //     // getData();
-    //     if (e.target.value) {
-    //         const result = data.filter(value => {
-    //             return value?.lessonName ? value.lessonName.toLowerCase().includes(e.target.value.toLowerCase()) : ''
-    //         })
-    //         setfilteredData(result)
-    //     } else {
-    //         setfilteredData(data)
-    //     }
+      const handleDownload = () => {
+        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+        XLSX.writeFile(workbook, "FilteredUsers.xlsx");
+    };
+    
 
-    // }
 
     return (
         <div className="row">
             <ToastContainer></ToastContainer>
             <div className="col-md-12">
-                <h4 className="f-700 mb-4">All User</h4>
+                <h4 className="f-700 mb-4">All User</h4>    
                 {message && (
                     <div className="form-group">
                         <div className="alert alert-danger" role="alert">
@@ -67,13 +116,65 @@ const User = () => {
                         </div>
                     </div>
                 )}
-                <div className="table-header d-flex align-items-center">
-                    <div className="table-search">
+                <div className="table-header d-flex align-items-center mb-3 filter-row">
+                        
+  
+                    
+                    <div className="row w-100">
+                    <div className="col-md-3">
+                        <input
+                            type="text"
+                            placeholder="Search ... "
+                            value={masterSearch}
+                            onChange={e => setMasterSearch(e.target.value)}
+                            className="form-control"
+                        />
+                      </div>
+
+                     <div className="col-md-3">
+                        <input
+                            type="text"
+                            placeholder="Search Name ..."
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            className="form-control"
+                        />
+                     </div>   
+                     <div className="col-md-3">
+                        <select
+                            value={designation}
+                            onChange={e => setDesignation(e.target.value)}
+                            className="form-control"
+                        >
+                            <option value="">Select Designation</option>
+                            {uniqueDesignations.map(des => (
+                                <option key={des} value={des}>
+                                    {des}
+                                </option>
+                            ))}
+                        </select>
+                     </div>   
+                     <div className="col-md-3">
+                        <select
+                           value={location}
+                           onChange={e => setLocation(e.target.value)}
+                           className="form-control"
+                        >
+                           <option value="">Select Location</option>
+                           {uniqueLocation.map(loc => (
+                            <option key={loc} value={loc}>{loc}</option>
+                           ))
+
+                           }
+                        </select>
+                      </div>     
                     </div>
 
-                    <form class="d-flex align-items-center ms-auto">
-
-                    </form>
+                    <button className="btn btn-primary ms-3 download-btn" 
+                    onClick={handleDownload}
+                    >
+                        Download
+                    </button>
                 </div>
                 <div className="col-lg-6 m-auto">
                     {loading && (

@@ -21,8 +21,8 @@ const  UserViews = () => {
             try {
                 const response = await fetch(`https://jobpartal-backend.onrender.com/api/UserId/${UserId}`);
                 const result = await response.json();
-                if (result.Status === "success" && result.Response.length > 0 ) {
-                    setJob(result.Response[0]);
+                if (result.Status === "success" && result.Response ) {
+                    setJob(result.Response);
                     console.log("dsfdsfsd",job);
                     setLoading(false);
                 } else {
@@ -131,6 +131,67 @@ const  UserViews = () => {
                             <tr>
                                 <th>Total Experience Month</th>
                                 <td>{job.TotalExprenceMonth}</td>
+                            </tr>
+
+                            <tr>
+                                <th>Qualifications</th>
+                                <td>
+                                    <table className="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Course Name</th>
+                                                <th>University</th>
+                                                <th>Result</th>
+                                                <th>Starting Period</th>
+                                                <th>Ending Period</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {job.Qualification.map((qual) => (
+                                                <tr key={qual.Id}>
+                                                    <td>{qual.CourseName}</td>
+                                                    <td>{qual.University}</td>
+                                                    <td>{qual.Result}</td>
+                                                    <td>{qual.StartingPeriod}</td>
+                                                    <td>{qual.EndingPeriod}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Employment Information</th>
+                                <td>
+                                    <table className="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Company</th>
+                                                <th>Category Name</th>
+                                                <th>Work Location</th>
+                                                <th>Employment Type</th>
+                                                <th>Description</th>
+                                                <th>Expected Salary</th>
+                                                <th>Starting Period</th>
+                                                <th>Ending Period</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {job.EmploymentInfo.map((emp) => (
+                                                <tr key={emp.Id}>
+                                                    <td>{emp.Company}</td>
+                                                    <td>{emp.CategoryName}</td>
+                                                    <td>{emp.WorkLocation}</td>
+                                                    <td>{emp.EmployementType}</td>
+                                                    <td dangerouslySetInnerHTML={{ __html: emp.Descritpion }} />
+                                                    <td>{emp.ExpectedSalary}</td>
+                                                    <td>{emp.StartingPeriod}</td>
+                                                    <td>{emp.EndingPeriod}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
