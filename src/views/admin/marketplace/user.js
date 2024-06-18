@@ -95,11 +95,89 @@ const User = () => {
     };
 
 
-      const handleDownload = () => {
-        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    //   const handleDownload = () => {
+    //     const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    //     const workbook = XLSX.utils.book_new();
+    //     XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+    //     XLSX.writeFile(workbook, "FilteredUsers.xlsx");
+    // };
+
+    const handleDownload = () => {
+        const flattenData = (users) => {
+            return users.map(user => {
+                const qualifications = user.Qualification.map(qual => ({
+                    Qualification: qual.Qualification,
+                    CourseName: qual.CourseName,
+                    University: qual.University,
+                    Result: qual.Result,
+                    StartingPeriod: qual.StartingPeriod,
+                    EndingPeriod: qual.EndingPeriod
+                }));
+
+                const employmentInfo = user.EmploymentInfo.map(emp => ({
+                    Company: emp.Company,
+                    CategoryName: emp.CategoryName,
+                    WorkLocation: emp.WorkLocation,
+                    EmploymentType: emp.EmploymentType,
+                    Description: emp.Descritpion,
+                    JobTypeName: emp.JobTypeName,
+                    CategoryId: emp.CategoryId,
+                    ExpectedSalary: emp.ExpectedSalary,
+                    StartingPeriod: emp.StartingPeriod,
+                    EndingPeriod: emp.EndingPeriod
+                }));
+
+                return {
+                    Id: user.Id,
+                    logId: user.logId,
+                    UserName: user.UserName,
+                    EmailAddress: user.EmailAddress,
+                    MobileNumber: user.MobileNumber,
+                    TotalExperienceYear: user.TotalExprenceYear,
+                    TotalExperienceMonth: user.TotalExprenceMonth,
+                    TotalAnnualSalary: user.TotalAnnualSalary,
+                    CurrentLocation: user.CurrentLocation,
+                    AvailabilityToJoin: user.AvailabilityToJoin,
+                    DateCreated: user.DateCreated,
+                    CareerObjective: user.CareerObjective,
+                    Gender: user.Gender,
+                    MaritalStatus: user.MaritalStatus,
+                    Designation: user.Designation,
+                    Skill: user.Skill,
+                    Hobbies: user.Hobbies,
+                    DOB: user.DOB,
+                    Category: user.Category,
+                    ...qualifications.reduce((acc, qual, idx) => ({
+                        ...acc,
+                        [`Qualification_${idx + 1}`]: qual.Qualification,
+                        [`CourseName_${idx + 1}`]: qual.CourseName,
+                        [`University_${idx + 1}`]: qual.University,
+                        [`Result_${idx + 1}`]: qual.Result,
+                        [`Qualification_StartingPeriod_${idx + 1}`]: qual.StartingPeriod,
+                        [`Qualification_EndingPeriod_${idx + 1}`]: qual.EndingPeriod
+                    }), {}),
+                    ...employmentInfo.reduce((acc, emp, idx) => ({
+                        ...acc,
+                        [`Company_${idx + 1}`]: emp.Company,
+                        [`CategoryName_${idx + 1}`]: emp.CategoryName,
+                        [`WorkLocation_${idx + 1}`]: emp.WorkLocation,
+                        [`EmploymentType_${idx + 1}`]: emp.EmploymentType,
+                        [`Description_${idx + 1}`]: emp.Description,
+                        [`JobTypeName_${idx + 1}`]: emp.JobTypeName,
+                        [`CategoryId_${idx + 1}`]: emp.CategoryId,
+                        [`ExpectedSalary_${idx + 1}`]: emp.ExpectedSalary,
+                        [`Employment_StartingPeriod_${idx + 1}`]: emp.StartingPeriod,
+                        [`Employment_EndingPeriod_${idx + 1}`]: emp.EndingPeriod
+                    }), {})
+                };
+            });
+        };
+
+        const flattenedData = flattenData(filteredData);
+        const worksheet = XLSX.utils.json_to_sheet(flattenedData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
-        XLSX.writeFile(workbook, "FilteredUsers.xlsx");
+        XLSX.writeFile(workbook, "Users.xlsx");
     };
     
 

@@ -95,7 +95,7 @@ const Employer = () => {
         const worksheet = XLSX.utils.json_to_sheet(filteredData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
-        XLSX.writeFile(workbook, "FilteredUsers.xlsx");
+        XLSX.writeFile(workbook, "EmployerList.xlsx");
     };
  
 
@@ -172,7 +172,7 @@ const Employer = () => {
                         >
                             Download
                         </button>
-                    </div>
+                </div>
                 <div className="col-lg-6 m-auto">
                     {loading && (
                         <span className="spinner-border spinner-border-sm"></span>

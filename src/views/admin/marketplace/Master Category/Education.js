@@ -21,9 +21,9 @@ const Education = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
-    const [category,setCategory] = useState("");
-    const [masterSearch,setMasterSearch] = useState("");
-    const [uniqueCategory,setUniqueCategory] = useState([]);
+      const [category,setCategory] = useState("");
+      const [masterSearch,setMasterSearch] = useState("");
+      const [uniqueCategory,setUniqueCategory] = useState([]);
 
 
     const storedUserId = JSON.parse(localStorage.getItem("userId"));
@@ -137,7 +137,7 @@ const Education = () => {
       const worksheet = XLSX.utils.json_to_sheet(filteredData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Jobs");
-      XLSX.writeFile(workbook, "FilteredJobs.xlsx");
+      XLSX.writeFile(workbook, "Education.xlsx");
   };
 
     return (

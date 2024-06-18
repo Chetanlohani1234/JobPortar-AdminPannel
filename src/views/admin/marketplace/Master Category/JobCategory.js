@@ -135,7 +135,7 @@ const JobCategory = () => {
       const worksheet = XLSX.utils.json_to_sheet(filteredData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Jobs");
-      XLSX.writeFile(workbook, "FilteredJobs.xlsx");
+      XLSX.writeFile(workbook, "category.xlsx");
   };
  
 
