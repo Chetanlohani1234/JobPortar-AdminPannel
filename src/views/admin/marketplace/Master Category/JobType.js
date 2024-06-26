@@ -234,9 +234,6 @@ const JobType = () => {
                                         </svg>
                                         </Link>
 
-  
-                                        
-
                                         <button
         type="button"
         className="mx-2"
